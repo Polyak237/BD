@@ -45,7 +45,7 @@ class Body(models.Model):
 class Client(models.Model):
     f = models.CharField('Фамилия', max_length=20, blank=False, null=True)
     i = models.CharField('Имя', max_length=20, blank=False, null=True)
-    o = models.CharField('Отчество', max_length=20, blank=True, null=True, default=' ')
+    o = models.CharField('Отчество', max_length=20, blank=True, null=True, default='')
     card = models.CharField('Клубная карта', max_length=10, blank=False, null=True)
     passport = models.CharField('Паспорт', max_length=12, blank=False, null=True)
     phone_number = models.CharField('Номер телефона', max_length=16, blank=False)
@@ -70,7 +70,7 @@ class Client(models.Model):
         verbose_name_plural = 'Клиенты'
 
     def __str__(self):
-        return self.f + ' ' + self.i + ' ' + self.o + ' '
+        return self.f + ' ' + self.i + ' '
 
 
 class Employee(models.Model):
@@ -165,7 +165,7 @@ class Supply(models.Model):
         verbose_name_plural = 'Поставки'
 
     def __str__(self):
-        return '№ ' + self.nomer
+        return '№ ' + str(self.nomer)
 
 
 class Zakaz(models.Model):
@@ -185,11 +185,11 @@ class Zakaz(models.Model):
     itog_Price = models.FloatField('Сумма к оплате', blank=True, default=0, null=True)
 
     def save(self, *args, **kwargs):
-        if Client.skidka.exists():
+        if self.client:
             self.itog_Price = self.price * (1 - self.client.skidka)
-            super().save(*args, **kwargs)
         else:
             self.itog_Price = self.price
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Заказ'
