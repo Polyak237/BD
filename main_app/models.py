@@ -49,7 +49,7 @@ class Client(models.Model):
     card = models.CharField('Клубная карта', max_length=10, blank=False, null=True)
     passport = models.CharField('Паспорт', max_length=12, blank=False, null=True)
     phone_number = models.CharField('Номер телефона', max_length=16, blank=False)
-    email = models.CharField('Электронная почта', max_length=50, blank=True)
+    email = models.EmailField('Электронная почта', max_length=50, blank=True)
     kolvo_zakazov = models.IntegerField('Количество заказов', blank=True, null=True)
     priv_lvl = models.IntegerField('Уровень привилегий', blank=True, null=True)
     skidka = models.FloatField('Скидка', blank=True, null=True, default=0)
@@ -70,13 +70,13 @@ class Client(models.Model):
         verbose_name_plural = 'Клиенты'
 
     def __str__(self):
-        return self.f + ' ' + self.i + ' '
+        return self.f + ' ' + self.i
 
 
 class Employee(models.Model):
     f = models.CharField('Фамилия', max_length=30, blank=False, null=True)
     i = models.CharField('Имя', max_length=30, blank=False, null=True)
-    o = models.CharField('Отчество', max_length=30, blank=True, default=' ', null=True)
+    o = models.CharField('Отчество', max_length=30, blank=True, null=True, default='')
     passport = models.CharField('Паспорт', max_length=12, blank=False, null=True)
     phone_number = models.CharField('Номер телефона', max_length=16, blank=False)
     position = models.ForeignKey('Position', on_delete=models.SET_NULL, verbose_name='Должность',
@@ -87,14 +87,14 @@ class Employee(models.Model):
         verbose_name_plural = 'Сотрудники'
 
     def __str__(self):
-        return self.f + ' ' + self.i + ' ' + self.o + ' '
+        return self.f + ' ' + self.i
 
 
 class Fingerboard(models.Model):
     tuning_machine = models.ForeignKey('Material', on_delete=models.SET_NULL, verbose_name='Колки',
                                        related_name='fin', null=True)
     pins = models.CharField('Метки на грифе', max_length=50, blank=False)
-    headstock = models.CharField('Форма головы', max_length=50, blank=False)
+    headstock = models.FileField('Форма головы', upload_to='photo', blank=False)
     profile = models.CharField('Профиль', max_length=50, blank=True, null=True)
     material = models.ForeignKey('Material', on_delete=models.SET_NULL, verbose_name='Материал накладки',
                                  related_name='fin1', null=True)
@@ -112,6 +112,15 @@ class Fingerboard(models.Model):
 class Material(models.Model):
     name = models.CharField('Название', max_length=30, blank=False)
     amount_material = models.FloatField('Количество материала на складе (кг/шт.)', blank=False, null=True)
+
+    TYPES = (
+        ('Древесина для корпуса', 'Древесина для корпуса'),
+        ('Древесина для грифа', 'Древесина для грифа'),
+        ('Тремоло/бридж', 'Тремоло/бридж'),
+        ('Звукосниматель', 'Звукосниматель'),
+        ('Колки', 'Колки')
+    )
+    type = models.CharField('Тип компонента', choices=TYPES, max_length=50, default='Не выбран')
 
     class Meta:
         verbose_name = 'Материал'
@@ -154,6 +163,7 @@ class Supply(models.Model):
     nomer = models.IntegerField('id поставки', blank=False)
     material = models.ForeignKey('Material', on_delete=models.SET_NULL, verbose_name='Материал',
                                  related_name='materials', null=True)
+    amount_material = models.FloatField('Количество материала (кг/шт.)', blank=False, null=True)
     provider = models.ForeignKey('Provider', on_delete=models.SET_NULL, verbose_name='Поставщик',
                                  related_name='supplies', null=True)
     date = models.DateTimeField('Дата и время поставки', blank=False)
@@ -165,7 +175,7 @@ class Supply(models.Model):
         verbose_name_plural = 'Поставки'
 
     def __str__(self):
-        return '№ ' + str(self.nomer)
+        return '№' + str(self.nomer)
 
 
 class Zakaz(models.Model):
@@ -196,7 +206,7 @@ class Zakaz(models.Model):
         verbose_name_plural = 'Заказы'
 
     def __str__(self):
-        return '№ ' + str(self.pk)
+        return '№' + str(self.pk)
 
 # class Pet(models.Model):
 #     TYPES = (('Кошка', 'Кошка'),
@@ -242,8 +252,6 @@ class Zakaz(models.Model):
 #         ('Завершен', 'Завершен'),
 #         ('Отменен', 'Отменен')
 #     )
-#     created_at = models.DateTimeField('Время создания', default=timezone.now)
-#     duration = models.IntegerField('Длительность, дни')
 #     status = models.CharField('Статус', choices=STATUSES, max_length=40, default='Создан')
 #     request = models.OneToOneField('Request', on_delete=models.SET_NULL, verbose_name='Заявка',
 #                                    related_name='order', null=True)
