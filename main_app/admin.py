@@ -9,47 +9,47 @@ AdminSite.site_header = 'Магазин музыкальных инструме�
 
 
 class Adjustment1(admin.ModelAdmin):
-    list_display = ('pk', 'Scale_length', 'Scale_height', 'id_employee')
+    list_display = ('pk', 'scale_length', 'scale_height', 'id_employee')
 
 
 class Body1(admin.ModelAdmin):
-    list_display = ('pk', 'Colour', 'Form', 'Material')
+    list_display = ('pk', 'colour', 'form', 'material')
 
 
 class Client1(admin.ModelAdmin):
-    list_display = ('F', 'I', 'O', 'Card', 'Phone_number', 'Kolvo_zakazov', 'Priv_lvl')
+    list_display = ('f', 'i', 'o', 'card', 'phone_number', 'kolvo_zakazov', 'priv_lvl')
 
     # def get_queryset(self, request):
     #     qs = super().get_queryset(request)
-    #     self.exclude = ('Skidka', )
+    #     self.exclude = ('skidka', )
     #     return qs
 
 class Employee1(admin.ModelAdmin):
-    list_display = ('FIO', 'Phone_number', 'Position')
+    list_display = ('f', 'i', 'o', 'phone_number', 'position')
 
 
 class Fingerboard1(admin.ModelAdmin):
-    list_display = ('pk', 'Material', 'Tuning_machine', 'Headstock')
+    list_display = ('pk', 'material', 'tuning_machine', 'headstock')
 
 
 class Material1(admin.ModelAdmin):
-    list_display = ('Name', 'Amount_material')
+    list_display = ('name', 'amount_material')
 
 
 class Position1(admin.ModelAdmin):
-    list_display = ('Name', 'Salary', 'Duties')
+    list_display = ('name', 'salary', 'duties')
 
 
 class Provider1(admin.ModelAdmin):
-    list_display = ('Title', 'Office_address', 'Phone_number', 'Contact_name')
+    list_display = ('title', 'office_address', 'phone_number', 'contact_name')
 
 
 class Supply1(admin.ModelAdmin):
-    list_display = ('Nomer', 'Material', 'Provider', 'Date', 'Employee')
+    list_display = ('nomer', 'material', 'provider', 'date', 'employee')
 
 
 class Zakaz1(admin.ModelAdmin):
-    list_display = ('pk', 'Client', 'Body', 'Fingerboard', 'Adjustment', 'Itog_Price')
+    list_display = ('pk', 'client', 'body', 'fingerboard', 'adjustment', 'itog_Price')
 
 
 #     list_display = ('pet', 'description')
@@ -63,26 +63,7 @@ class Zakaz1(admin.ModelAdmin):
 #     search_fields = ('duration', 'status')
 #
 #
-# class AgreementAdmin(admin.ModelAdmin):
-#     list_display = ('order', 'description', 'price')
-#
-#
-# class WorkerAdmin(admin.ModelAdmin):
-#     list_display = ('last_name', 'first_name', 'middle_name', 'phone_number', 'email', 'position')
-#
-#
-# class CarAdmin(admin.ModelAdmin):
-#     list_display = ('numbers', 'mark_n_model', 'color', 'worker')
-#
-#
-# class TransportEventAdmin(admin.ModelAdmin):
-#     list_display = ('order', 'timestamp_start', 'timestamp_end', 'description')
-#
-#
-# class ReportAdmin(admin.ModelAdmin):
-#     list_display = ('order', 'created_at', 'description', 'video', 'image')
-#
-#
+
 admin.site.register(Adjustment, Adjustment1)
 admin.site.register(Body, Body1)
 admin.site.register(Client, Client1)

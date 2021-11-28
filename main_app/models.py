@@ -5,8 +5,8 @@ from django.db import models
 
 
 class Adjustment(models.Model):
-    Scale_length = models.FloatField('Длина мензуры', max_length=5, blank=False)
-    Scale_height = models.FloatField('Высота струн', max_length=5, blank=False)
+    scale_length = models.FloatField('Длина мензуры', max_length=5, blank=False)
+    scale_height = models.FloatField('Высота струн', max_length=5, blank=False)
     id_employee = models.IntegerField('Привязанный сотрудник', blank=True, null=True)
 
     class Meta:
@@ -14,48 +14,48 @@ class Adjustment(models.Model):
         verbose_name_plural = 'Настройки'
 
     def __str__(self):
-        return '№' + str(self.pk) + ' с параметрами ' + str(self.Scale_length) + ', ' + str(self.Scale_height)
+        return '№' + str(self.pk) + ' с параметрами ' + str(self.scale_length) + ', ' + str(self.scale_height)
 
 
 class Body(models.Model):
-    Colour = models.CharField('Цвет', max_length=100, blank=False)
-    Tremolo_system = models.CharField('Система тремоло / бридж', max_length=50, blank=False)
-    Pickup_neck = models.CharField('Нековый звукосниматель', max_length=50, blank=True, null=True)
-    Pickup_mid = models.CharField('Средний звукосниматель', max_length=50, blank=True, null=True)
-    Pickup_bridge = models.CharField('Бриджевый звукосниматель', max_length=50, blank=True, null=True)
-    Form = models.CharField('Форма', max_length=50, blank=False)
-    Material = models.IntegerField('Материал', blank=True, null=True)
-    Employee = models.IntegerField('Привязанный сотрудник', blank=True, null=True)
+    colour = models.CharField('Цвет', max_length=100, blank=False)
+    tremolo_system = models.CharField('Система тремоло / бридж', max_length=50, blank=False)
+    pickup_neck = models.CharField('Нековый звукосниматель', max_length=50, blank=True, null=True)
+    pickup_mid = models.CharField('Средний звукосниматель', max_length=50, blank=True, null=True)
+    pickup_bridge = models.CharField('Бриджевый звукосниматель', max_length=50, blank=True, null=True)
+    form = models.CharField('Форма', max_length=50, blank=False)
+    material = models.IntegerField('Материал', blank=True, null=True)
+    employee = models.IntegerField('Привязанный сотрудник', blank=True, null=True)
 
     class Meta:
         verbose_name = 'Корпус'
         verbose_name_plural = 'Корпуса'
 
     def __str__(self):
-        return '№' + str(self.pk) + ' цвета ' + str(self.Colour) + ' формы ' + str(self.Form)
+        return '№' + str(self.pk) + ' цвета ' + str(self.colour) + ' формы ' + str(self.form)
 
 
 class Client(models.Model):
-    F = models.CharField('Фамилия', max_length=20, blank=False, null=True)
-    I = models.CharField('Имя', max_length=20, blank=False, null=True)
-    O = models.CharField('Отчество', max_length=20, blank=True, null=True)
-    Card = models.CharField('Клубная карта', max_length=10, blank=False, null=True)
-    Passport = models.CharField('Паспорт', max_length=12, blank=False, null=True)
-    Phone_number = models.CharField('Номер телефона', max_length=16, blank=False)
-    Email = models.CharField('Электронная почта', max_length=50, blank=True)
-    Kolvo_zakazov = models.IntegerField('Количество заказов', blank=True, null=True)
-    Priv_lvl = models.IntegerField('Уровень привилегий', blank=True, null=True)
-    Skidka = models.FloatField('Скидка', blank=True, null=True)
+    f = models.CharField('Фамилия', max_length=20, blank=False, null=True)
+    i = models.CharField('Имя', max_length=20, blank=False, null=True)
+    o = models.CharField('Отчество', max_length=20, blank=True, null=True, default='-')
+    card = models.CharField('Клубная карта', max_length=10, blank=False, null=True)
+    passport = models.CharField('Паспорт', max_length=12, blank=False, null=True)
+    phone_number = models.CharField('Номер телефона', max_length=16, blank=False)
+    email = models.CharField('Электронная почта', max_length=50, blank=True)
+    kolvo_zakazov = models.IntegerField('Количество заказов', blank=True, null=True)
+    priv_lvl = models.IntegerField('Уровень привилегий', blank=True, null=True)
+    skidka = models.FloatField('Скидка', blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        if self.Kolvo_zakazov < 3:
-            self.Priv_lvl = 1
-        elif 3 <= self.Kolvo_zakazov < 7:
-            self.Priv_lvl = 2
-            self.Skidka = 0.1
-        elif self.Kolvo_zakazov >= 7:
-            self.Priv_lvl = 3
-            self.Skidka = 0.2
+        if self.kolvo_zakazov < 3:
+            self.priv_lvl = 1
+        elif 3 <= self.kolvo_zakazov < 7:
+            self.priv_lvl = 2
+            self.skidka = 0.1
+        elif self.kolvo_zakazov >= 7:
+            self.priv_lvl = 3
+            self.skidka = 0.2
         super().save(*args, **kwargs)
 
     class Meta:
@@ -63,30 +63,32 @@ class Client(models.Model):
         verbose_name_plural = 'Клиенты'
 
     def __str__(self):
-        return self.F + ' ' + self.I + ' ' + self.O + ' '
+        return self.f + ' ' + self.i + ' ' + self.o + ' '
 
 
 class Employee(models.Model):
-    FIO = models.CharField('ФИО', max_length=60, blank=False, null=True)
-    Passport = models.CharField('Паспорт', max_length=12, blank=False, null=True)
-    Phone_number = models.CharField('Номер телефона', max_length=16, blank=False)
-    Position = models.CharField('Должность', max_length=50, blank=False)
+    f = models.CharField('Фамилия', max_length=30, blank=False, null=True)
+    i = models.CharField('Имя', max_length=30, blank=False, null=True)
+    o = models.CharField('Отчество', max_length=30, blank=True, default='-', null=True)
+    passport = models.CharField('Паспорт', max_length=12, blank=False, null=True)
+    phone_number = models.CharField('Номер телефона', max_length=16, blank=False)
+    position = models.CharField('Должность', max_length=50, blank=False)
 
     class Meta:
         verbose_name = 'Сотрудник'
         verbose_name_plural = 'Сотрудники'
 
     def __str__(self):
-        return self.FIO
+        return self.f + ' ' + self.i + ' ' + self.o + ' '
 
 
 class Fingerboard(models.Model):
-    Tuning_machine = models.CharField('Колки', max_length=50, blank=False)
-    Pins = models.CharField('Метки на грифе', max_length=50, blank=False)
-    Headstock = models.CharField('Форма головы', max_length=50, blank=False)
-    Profile = models.CharField('Профиль', max_length=50, blank=True, null=True)
-    Material = models.IntegerField('Материал', blank=False)
-    Employee = models.IntegerField('Привязанный сотрудник', blank=True, null=True)
+    tuning_machine = models.CharField('Колки', max_length=50, blank=False)
+    pins = models.CharField('Метки на грифе', max_length=50, blank=False)
+    headstock = models.CharField('Форма головы', max_length=50, blank=False)
+    profile = models.CharField('Профиль', max_length=50, blank=True, null=True)
+    material = models.IntegerField('Материал', blank=False)
+    employee = models.IntegerField('Привязанный сотрудник', blank=True, null=True)
 
     class Meta:
         verbose_name = 'Гриф'
@@ -97,71 +99,71 @@ class Fingerboard(models.Model):
 
 
 class Material(models.Model):
-    Name = models.CharField('Название', max_length=30, blank=False)
-    Amount_material = models.FloatField('Количество материала на складе (кг/шт.)', blank=False, null=True)
+    name = models.CharField('Название', max_length=30, blank=False)
+    amount_material = models.FloatField('Количество материала на складе (кг/шт.)', blank=False, null=True)
 
     class Meta:
         verbose_name = 'Материал'
         verbose_name_plural = 'Материалы'
 
         def __str__(self):
-            return self.Name
+            return self.name
 
 
 class Position(models.Model):
-    Name = models.CharField('Название', max_length=30, blank=False)
-    Salary = models.IntegerField('Зарплата', blank=False)
-    Duties = models.TextField('Обязанности', max_length=500, blank=False)
+    name = models.CharField('Название', max_length=30, blank=False)
+    salary = models.IntegerField('Зарплата', blank=False)
+    duties = models.TextField('Обязанности', max_length=500, blank=False)
 
     class Meta:
         verbose_name = 'Должность'
         verbose_name_plural = 'Должности'
 
         def __str__(self):
-            return self.Name
+            return self.name
 
 
 class Provider(models.Model):
-    Title = models.CharField('Название', max_length=50, blank=False)
-    Office_address = models.CharField('Адрес офиса', max_length=70, blank=True, null=True)
-    Phone_number = models.CharField('Контактный телефон', max_length=16, blank=False)
-    Contact_name = models.CharField('ФИО контактного лица', max_length=70, blank=True, null=True)
-    Employee = models.IntegerField('Привязанный сотрудник', blank=True)
+    title = models.CharField('Название', max_length=50, blank=False)
+    office_address = models.CharField('Адрес офиса', max_length=70, blank=True, null=True)
+    phone_number = models.CharField('Контактный телефон', max_length=16, blank=False)
+    contact_name = models.CharField('ФИО контактного лица', max_length=70, blank=True, null=True)
+    employee = models.IntegerField('Привязанный сотрудник', blank=True)
 
     class Meta:
         verbose_name = 'Поставщик'
         verbose_name_plural = 'Поставщики'
 
         def __str__(self):
-            return self.Title
+            return self.title
 
 
 class Supply(models.Model):
-    Nomer = models.IntegerField('id поставки', blank=False)
-    Material = models.IntegerField('Материал', blank=False)
-    Provider = models.CharField('Поставщик', max_length=50, blank=False)
-    Date = models.DateTimeField('Дата и время поставки', blank=False)
-    Employee = models.IntegerField('Привязанный сотрудник', blank=True)
+    nomer = models.IntegerField('id поставки', blank=False)
+    material = models.IntegerField('Материал', blank=False)
+    provider = models.CharField('Поставщик', max_length=50, blank=False)
+    date = models.DateTimeField('Дата и время поставки', blank=False)
+    employee = models.IntegerField('Привязанный сотрудник', blank=True)
 
     class Meta:
         verbose_name = 'Поставка'
         verbose_name_plural = 'Поставки'
 
         def __str__(self):
-            return '№ ' + self.Nomer
+            return '№ ' + self.nomer
 
 
 class Zakaz(models.Model):
-    Body = models.IntegerField('id корпуса', blank=False)
-    Fingerboard = models.IntegerField('id грифа', blank=False)
-    Adjustment = models.IntegerField('id настройки', blank=False)
-    Client = models.IntegerField('Номер карты постоянного покупателя', blank=True, null=True)
-    Requirements = models.TextField('Требования клиента', blank=False)
-    Price = models.IntegerField('Предварительная цена', blank=False, default=0, null=True)
-    Itog_Price = models.FloatField('Сумма к оплате', blank=True, default=0, null=True)
+    body = models.IntegerField('id корпуса', blank=False)
+    fingerboard = models.IntegerField('id грифа', blank=False)
+    adjustment = models.IntegerField('id настройки', blank=False)
+    client = models.IntegerField('Номер карты постоянного покупателя', blank=True, null=True)
+    requirements = models.TextField('Требования клиента', blank=False)
+    price = models.IntegerField('Предварительная цена', blank=False, default=0, null=True)
+    itog_Price = models.FloatField('Сумма к оплате', blank=True, default=0, null=True)
 
     # def save(self, *args, **kwargs):
-    #     self.Itog_Price = self.Price * (1 - self.Skidka)
+    #     self.itog_Price = self.price * (1 - self.skidka)
     #     super().save(*args, **kwargs)
 
 
