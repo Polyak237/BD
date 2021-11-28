@@ -9,7 +9,7 @@ AdminSite.site_header = 'Магазин музыкальных инструме�
 
 
 class Adjustment1(admin.ModelAdmin):
-    list_display = ('pk', 'scale_length', 'scale_height', 'id_employee')
+    list_display = ('pk', 'scale_length', 'scale_height', 'employee')
 
 
 class Body1(admin.ModelAdmin):
@@ -18,6 +18,7 @@ class Body1(admin.ModelAdmin):
 
 class Client1(admin.ModelAdmin):
     list_display = ('f', 'i', 'o', 'card', 'phone_number', 'kolvo_zakazov', 'priv_lvl')
+    readonly_fields = ('priv_lvl', 'skidka')
 
     # def get_queryset(self, request):
     #     qs = super().get_queryset(request)
@@ -49,7 +50,11 @@ class Supply1(admin.ModelAdmin):
 
 
 class Zakaz1(admin.ModelAdmin):
-    list_display = ('pk', 'client', 'body', 'fingerboard', 'adjustment', 'itog_Price')
+    list_display = ('pk', 'client', 'body', 'fin', 'adj', 'itog_Price')
+    # def get_queryset(self, request):
+    #     qs = super().get_queryset(request)
+    #     self.exclude = ('skidka', )
+    #     return qs
 
 
 #     list_display = ('pet', 'description')

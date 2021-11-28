@@ -7,7 +7,8 @@ from django.db import models
 class Adjustment(models.Model):
     scale_length = models.FloatField('Длина мензуры', max_length=5, blank=False)
     scale_height = models.FloatField('Высота струн', max_length=5, blank=False)
-    id_employee = models.IntegerField('Привязанный сотрудник', blank=True, null=True)
+    employee = models.ForeignKey('Employee', on_delete=models.SET_NULL, verbose_name='Привязанный сотрудник',
+                                 related_name='bodies9', null=True, blank=True)
 
     class Meta:
         verbose_name = 'Настройка'
@@ -19,13 +20,19 @@ class Adjustment(models.Model):
 
 class Body(models.Model):
     colour = models.CharField('Цвет', max_length=100, blank=False)
-    tremolo_system = models.CharField('Система тремоло / бридж', max_length=50, blank=False)
-    pickup_neck = models.CharField('Нековый звукосниматель', max_length=50, blank=True, null=True)
-    pickup_mid = models.CharField('Средний звукосниматель', max_length=50, blank=True, null=True)
-    pickup_bridge = models.CharField('Бриджевый звукосниматель', max_length=50, blank=True, null=True)
+    tremolo_system = models.ForeignKey('Material', on_delete=models.SET_NULL, verbose_name='Система тремоло / бридж',
+                                       related_name='bodies', null=True)
+    pickup_neck = models.ForeignKey('Material', on_delete=models.SET_NULL, verbose_name='Нековый звукосниматель',
+                                    related_name='bodies1', null=True, blank=True)
+    pickup_mid = models.ForeignKey('Material', on_delete=models.SET_NULL, verbose_name='Средний звукосниматель',
+                                   related_name='bodies2', null=True, blank=True)
+    pickup_bridge = models.ForeignKey('Material', on_delete=models.SET_NULL, verbose_name='Бриджевый звукосниматель',
+                                      related_name='bodies3', null=True, blank=True)
     form = models.CharField('Форма', max_length=50, blank=False)
-    material = models.IntegerField('Материал', blank=True, null=True)
-    employee = models.IntegerField('Привязанный сотрудник', blank=True, null=True)
+    material = models.ForeignKey('Material', on_delete=models.SET_NULL, verbose_name='Материал корпуса',
+                                 related_name='bodies4', null=True)
+    employee = models.ForeignKey('Employee', on_delete=models.SET_NULL, verbose_name='Привязанный сотрудник',
+                                 related_name='bodies5', null=True, blank=True)
 
     class Meta:
         verbose_name = 'Корпус'
@@ -38,14 +45,14 @@ class Body(models.Model):
 class Client(models.Model):
     f = models.CharField('Фамилия', max_length=20, blank=False, null=True)
     i = models.CharField('Имя', max_length=20, blank=False, null=True)
-    o = models.CharField('Отчество', max_length=20, blank=True, null=True, default='-')
+    o = models.CharField('Отчество', max_length=20, blank=True, null=True, default=' ')
     card = models.CharField('Клубная карта', max_length=10, blank=False, null=True)
     passport = models.CharField('Паспорт', max_length=12, blank=False, null=True)
     phone_number = models.CharField('Номер телефона', max_length=16, blank=False)
     email = models.CharField('Электронная почта', max_length=50, blank=True)
     kolvo_zakazov = models.IntegerField('Количество заказов', blank=True, null=True)
     priv_lvl = models.IntegerField('Уровень привилегий', blank=True, null=True)
-    skidka = models.FloatField('Скидка', blank=True, null=True)
+    skidka = models.FloatField('Скидка', blank=True, null=True, default=0)
 
     def save(self, *args, **kwargs):
         if self.kolvo_zakazov < 3:
@@ -69,10 +76,11 @@ class Client(models.Model):
 class Employee(models.Model):
     f = models.CharField('Фамилия', max_length=30, blank=False, null=True)
     i = models.CharField('Имя', max_length=30, blank=False, null=True)
-    o = models.CharField('Отчество', max_length=30, blank=True, default='-', null=True)
+    o = models.CharField('Отчество', max_length=30, blank=True, default=' ', null=True)
     passport = models.CharField('Паспорт', max_length=12, blank=False, null=True)
     phone_number = models.CharField('Номер телефона', max_length=16, blank=False)
-    position = models.CharField('Должность', max_length=50, blank=False)
+    position = models.ForeignKey('Position', on_delete=models.SET_NULL, verbose_name='Должность',
+                                 related_name='employees', null=True)
 
     class Meta:
         verbose_name = 'Сотрудник'
@@ -83,19 +91,22 @@ class Employee(models.Model):
 
 
 class Fingerboard(models.Model):
-    tuning_machine = models.CharField('Колки', max_length=50, blank=False)
+    tuning_machine = models.ForeignKey('Material', on_delete=models.SET_NULL, verbose_name='Колки',
+                                       related_name='fin', null=True)
     pins = models.CharField('Метки на грифе', max_length=50, blank=False)
     headstock = models.CharField('Форма головы', max_length=50, blank=False)
     profile = models.CharField('Профиль', max_length=50, blank=True, null=True)
-    material = models.IntegerField('Материал', blank=False)
-    employee = models.IntegerField('Привязанный сотрудник', blank=True, null=True)
+    material = models.ForeignKey('Material', on_delete=models.SET_NULL, verbose_name='Материал накладки',
+                                 related_name='fin1', null=True)
+    employee = models.ForeignKey('Employee', on_delete=models.SET_NULL, verbose_name='Привязанный сотрудник',
+                                 related_name='fin1', null=True, blank=True)
 
     class Meta:
         verbose_name = 'Гриф'
         verbose_name_plural = 'Грифы'
 
-        def __str__(self):
-            return '№' + str(self.pk)
+    def __str__(self):
+        return '№' + str(self.pk)
 
 
 class Material(models.Model):
@@ -106,8 +117,8 @@ class Material(models.Model):
         verbose_name = 'Материал'
         verbose_name_plural = 'Материалы'
 
-        def __str__(self):
-            return self.name
+    def __str__(self):
+        return self.name
 
 
 class Position(models.Model):
@@ -119,8 +130,8 @@ class Position(models.Model):
         verbose_name = 'Должность'
         verbose_name_plural = 'Должности'
 
-        def __str__(self):
-            return self.name
+    def __str__(self):
+        return self.name
 
 
 class Provider(models.Model):
@@ -128,51 +139,64 @@ class Provider(models.Model):
     office_address = models.CharField('Адрес офиса', max_length=70, blank=True, null=True)
     phone_number = models.CharField('Контактный телефон', max_length=16, blank=False)
     contact_name = models.CharField('ФИО контактного лица', max_length=70, blank=True, null=True)
-    employee = models.IntegerField('Привязанный сотрудник', blank=True)
+    employee = models.ForeignKey('Employee', on_delete=models.SET_NULL, verbose_name='Привязанный сотрудник',
+                                 related_name='providers', null=True, blank=True)
 
     class Meta:
         verbose_name = 'Поставщик'
         verbose_name_plural = 'Поставщики'
 
-        def __str__(self):
-            return self.title
+    def __str__(self):
+        return self.title
 
 
 class Supply(models.Model):
     nomer = models.IntegerField('id поставки', blank=False)
-    material = models.IntegerField('Материал', blank=False)
-    provider = models.CharField('Поставщик', max_length=50, blank=False)
+    material = models.ForeignKey('Material', on_delete=models.SET_NULL, verbose_name='Материал',
+                                 related_name='materials', null=True)
+    provider = models.ForeignKey('Provider', on_delete=models.SET_NULL, verbose_name='Поставщик',
+                                 related_name='supplies', null=True)
     date = models.DateTimeField('Дата и время поставки', blank=False)
-    employee = models.IntegerField('Привязанный сотрудник', blank=True)
+    employee = models.ForeignKey('Employee', on_delete=models.SET_NULL, verbose_name='Привязанный сотрудник',
+                                 related_name='supplies', null=True, blank=True)
 
     class Meta:
         verbose_name = 'Поставка'
         verbose_name_plural = 'Поставки'
 
-        def __str__(self):
-            return '№ ' + self.nomer
+    def __str__(self):
+        return '№ ' + self.nomer
 
 
 class Zakaz(models.Model):
-    body = models.IntegerField('id корпуса', blank=False)
-    fingerboard = models.IntegerField('id грифа', blank=False)
-    adjustment = models.IntegerField('id настройки', blank=False)
-    client = models.IntegerField('Номер карты постоянного покупателя', blank=True, null=True)
+    body = models.OneToOneField('Body', on_delete=models.SET_NULL, verbose_name='Корпус', related_name='zakaz',
+                                blank=True, default='', null=True)
+    fin = models.OneToOneField('Fingerboard', on_delete=models.SET_NULL, verbose_name='Гриф', related_name='zakaz',
+                               blank=True, default='', null=True)
+    adj = models.OneToOneField('Adjustment', on_delete=models.SET_NULL, verbose_name='Настройка', related_name='zakaz',
+                               blank=True, default='', null=True)
+    client = models.ForeignKey('Client', on_delete=models.SET_NULL, verbose_name='Клиент', related_name='zakazbI',
+                               blank=True, default='', null=True)
     requirements = models.TextField('Требования клиента', blank=False)
+    employee = models.ForeignKey('Employee', on_delete=models.SET_NULL, verbose_name='Привязанный сотрудник',
+                                 related_name='zakazbI', null=True, blank=True)
     price = models.IntegerField('Предварительная цена', blank=False, default=0, null=True)
+
     itog_Price = models.FloatField('Сумма к оплате', blank=True, default=0, null=True)
 
-    # def save(self, *args, **kwargs):
-    #     self.itog_Price = self.price * (1 - self.skidka)
-    #     super().save(*args, **kwargs)
-
+    def save(self, *args, **kwargs):
+        if Client.skidka.exists():
+            self.itog_Price = self.price * (1 - self.client.skidka)
+            super().save(*args, **kwargs)
+        else:
+            self.itog_Price = self.price
 
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'
 
-        def __str__(self):
-            return '№ ' + str(self.pk)
+    def __str__(self):
+        return '№ ' + str(self.pk)
 
 # class Pet(models.Model):
 #     TYPES = (('Кошка', 'Кошка'),
